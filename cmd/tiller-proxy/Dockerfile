@@ -1,17 +1,12 @@
-# syntax = docker/dockerfile:experimental
-
-FROM golang:1.13 as builder
+FROM golang:1.11 as builder
+ENV $GOPATH=/go/
+RUN go get github.com/kubeapps/kubeapps/cmd/tiller-proxy
+#COPY . /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
+ADD ./tiller-proxy /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
+#COPY main.go /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
+COPY ./chart /go/src/github.com/kubeapps/kubeapps/pkg/chart
 WORKDIR /go/src/github.com/kubeapps/kubeapps
-COPY go.mod go.sum ./
-COPY vendor vendor
-COPY pkg pkg
-COPY cmd cmd
-ARG VERSION
-# With the trick below, Go's build cache is kept between builds.
-# https://github.com/golang/go/issues/27719#issuecomment-514747274
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -installsuffix cgo -ldflags "-X main.version=$VERSION" ./cmd/tiller-proxy
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo ./cmd/tiller-proxy
 
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

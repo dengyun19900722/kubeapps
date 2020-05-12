@@ -12,6 +12,7 @@ It is possible to configure this proxy with the following flags:
 
 ```
       --debug                           enable verbose output
+      --disable-auth                    Disable authorization check
       --home string                     location of your Helm config. Overrides $HELM_HOME (default "/root/.helm")
       --host string                     address of Tiller. Overrides $HELM_HOST
       --kube-context string             name of the kubeconfig context to use
@@ -30,13 +31,11 @@ It is possible to configure this proxy with the following flags:
 This proxy provides 6 different routes:
 
  - `GET` `/v1/releases`: List all the releases of the Tiller
- - `GET` `/v1/namespaces/{namespace}/releases`: List all the releases within a namespace
- - `POST` `/v1/namespaces/{namespace}/releases`: Create a new release
- - `GET` `/v1/namespaces/{namespace}/releases/{release}/test`: Runs tests for the release
- - `GET` `/v1/namespaces/{namespace}/releases/{release}`: Get release info
- - `PUT` `/v1/namespaces/{namespace}/releases/{release}`: Update release info
- - `DELETE` `/v1/namespaces/{namespace}/releases/{release}`: Delete a release
-
+ - `GET` `/namespaces/{namespace}/releases`: List all the releases within a namespace
+ - `POST` `/namespaces/{namespace}/releases`: Create a new release
+ - `GET` `/namespaces/{namespace}/releases/{release}`: Get release info
+ - `PUT` `/namespaces/{namespace}/releases/{release}`: Update release info
+ - `DELETE` `/namespaces/{namespace}/releases/{release}`: Delete a release
 
 # Enabling authorization
 
