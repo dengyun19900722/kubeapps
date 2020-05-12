@@ -1,8 +1,8 @@
 FROM golang:1.11 as builder
 ENV $GOPATH=/go/
 RUN go get github.com/kubeapps/kubeapps/cmd/tiller-proxy
-#COPY . /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
-ADD ./tiller-proxy /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
+COPY . /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
+#ADD ./tiller-proxy /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
 #COPY main.go /go/src/github.com/kubeapps/kubeapps/cmd/tiller-proxy
 COPY ./chart /go/src/github.com/kubeapps/kubeapps/pkg/chart
 WORKDIR /go/src/github.com/kubeapps/kubeapps
