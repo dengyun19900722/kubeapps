@@ -1,12 +1,9 @@
 /*
 Copyright (c) 2018 Bitnami
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,12 +23,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kubeapps/common/response"
-	"github.com/kubeapps/kubeapps/pkg/auth"
-	chartUtils "github.com/kubeapps/kubeapps/pkg/chart"
-	proxy "github.com/kubeapps/kubeapps/pkg/proxy"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 	"k8s.io/helm/pkg/proto/hapi/chart"
+
+	"github.com/kubeapps/kubeapps/pkg/auth"
+	chartUtils "github.com/kubeapps/kubeapps/pkg/chart"
+	proxy "github.com/kubeapps/kubeapps/pkg/proxy"
 )
 
 // Context key type for request contexts
@@ -45,20 +43,20 @@ func AuthGate() negroni.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 		authHeader := strings.Split(req.Header.Get("Authorization"), "Bearer ")
 		if len(authHeader) != 2 {
-			response.NewErrorResponse(http.StatusUnauthorized, "Unauthorized").Write(w)
-			return
+			/*response.NewErrorResponse(http.StatusUnauthorized, "Unauthorized").Write(w)
+			return*/
 		}
-		userAuth, err := auth.NewAuth(authHeader[1])
+		/*userAuth, err := auth.NewAuth(authHeader[1])
 		if err != nil {
-			response.NewErrorResponse(http.StatusInternalServerError, err.Error()).Write(w)
-			return
+				response.NewErrorResponse(http.StatusInternalServerError, err.Error()).Write(w)
+				return
 		}
 		err = userAuth.Validate()
 		if err != nil {
-			response.NewErrorResponse(http.StatusUnauthorized, err.Error()).Write(w)
-			return
-		}
-		ctx := context.WithValue(req.Context(), userKey, userAuth)
+				response.NewErrorResponse(http.StatusUnauthorized, err.Error()).Write(w)
+				return
+		}*/
+		ctx := context.WithValue(req.Context(), userKey, nil)
 		next(w, req.WithContext(ctx))
 	}
 }

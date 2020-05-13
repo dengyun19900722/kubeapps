@@ -44,7 +44,8 @@ const (
 // Details contains the information to retrieve a Chart
 type Details struct {
 	// RepoURL is the URL of the repository. Defaults to stable repo.
-	RepoURL string `json:"repoUrl,omitempty"`
+	//RepoURL string `json:"repoUrl,omitempty"`
+	ChartURL string `json:"chartUrl,omitempty"`
 	// ChartName is the name of the chart within the repo.
 	ChartName string `json:"chartName"`
 	// ReleaseName is the Name of the release given to Tiller.
@@ -217,14 +218,24 @@ func (c *Chart) ParseDetails(data []byte) (*Details, error) {
 	return details, nil
 }
 
+func StrConcat(strs []string) (string) {
+	return strings.Join(strs, "")
+}
+
 // GetChart retrieves and loads a Chart from a registry
 func (c *Chart) GetChart(details *Details) (*chart.Chart, error) {
-	repoURL := details.RepoURL
-	if repoURL == "" {
+	baseChartURL := details.ChartURL
+	//repoURL := details.ChartURL
+	if baseChartURL == "" {
 		// FIXME: Make configurable
-		repoURL = defaultRepoURL
+		//repoURL = defaultRepoURL
+		log.Printf("chartUrl has not defined...")
 	}
-	repoURL = strings.TrimSuffix(strings.TrimSpace(repoURL), "/") + "/index.yaml"
+	var chartUrlArray = []string{baseChartURL, details.ChartName, "-", details.Version, ".tgz"}
+	chartURL := StrConcat(chartUrlArray)
+	//strings.append(baseChartURL, details.ChartName, "-", details.Version, ".tgz")
+	log.Printf("chartUrl is %s", chartURL)
+	//repoURL = strings.TrimSuffix(strings.TrimSpace(repoURL), "/") + "/index.yaml"
 
 	authHeader := ""
 	if details.Auth.Header != nil {
@@ -240,18 +251,18 @@ func (c *Chart) GetChart(details *Details) (*chart.Chart, error) {
 		authHeader = string(secret.Data[details.Auth.Header.SecretKeyRef.Key])
 	}
 
-	log.Printf("Downloading repo %s index...", repoURL)
-	repoIndex, err := fetchRepoIndex(&c.netClient, repoURL, authHeader)
-	if err != nil {
-		return nil, err
-	}
+	//log.Printf("Downloading repo %s index...", repoURL)
+	//repoIndex, err := fetchRepoIndex(&c.netClient, repoURL, authHeader)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	chartURL, err := findChartInRepoIndex(repoIndex, repoURL, details.ChartName, details.Version)
-	if err != nil {
-		return nil, err
-	}
+	//chartURL, err := findChartInRepoIndex(repoIndex, repoURL, details.ChartName, details.Version)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	log.Printf("Downloading %s ...", chartURL)
+	//log.Printf("Downloading %s ...", chartURL)
 	chartRequested, err := fetchChart(&c.netClient, chartURL, authHeader, c.load)
 	if err != nil {
 		return nil, err
